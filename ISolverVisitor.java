@@ -5,5 +5,6 @@ package com.stretchy;
  */
 public interface ISolverVisitor
 {
-    public void SolverAction(Gameboard gb);
+    public void SolverAction(Gameboard gb, OutputHandler out);
+    public void Solve(int queueSize) throws Exception;
 }

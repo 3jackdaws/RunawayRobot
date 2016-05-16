@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.*;
 
 import java.util.concurrent.DelayQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by ian on 3/19/16.
@@ -27,12 +28,16 @@ public class BoardSolver implements ISolverVisitorAcceptor
 
     private long SolveTime;
     private int GuessNumber;
+    protected OutputHandler outputHandler;
+    protected volatile AtomicBoolean stopWork;
+    VisitorAcceptorThreadwrapper [] threads;
 
     public BoardSolver(Gameboard gb)
     {
         Board = gb;
         Terrain = Board.getTerrain().toCharArray();
         MovementQueue = new ArrayDeque<>(Board.getMaxInstructions());
+        stopWork = new AtomicBoolean(false);
     }
 
     public BoardSolver(BoardSolver cp)
@@ -40,7 +45,10 @@ public class BoardSolver implements ISolverVisitorAcceptor
         Board = cp.Board;
     }
 
-
+    public void setOutputHandler(OutputHandler oh)
+    {
+        outputHandler = oh;
+    }
 
     private void ShowPath()
     {
@@ -157,9 +165,46 @@ public class BoardSolver implements ISolverVisitorAcceptor
 
     @Override
     public void AcceptVisitor(ISolverVisitor visitor) {
-        visitor.SolverAction(Board);
+        visitor.SolverAction(Board, outputHandler);
         Terrain = Board.getTerrain().toCharArray();
         MovementQueue = Board.getInstructionQueue();
+    }
+
+    public void AcceptVisitorThreaded(ISolverVisitor visitor, int num_threads)
+    {
+        threads = new VisitorAcceptorThreadwrapper[num_threads];
+        int min = Board.getMinInstructions();
+        int max = Board.getMaxInstructions();
+        ArrayList<Integer> queuesToDo = new ArrayList<>(max);
+        for (int i = max; i>min; i--)
+        {
+            queuesToDo.add(i);
+        }
+        for (int i = 0; i<num_threads; i++)
+        {
+            if(i % 2 == 0)
+                threads[i] = new VisitorAcceptorThreadwrapper(Board, outputHandler, stopWork.get(), true);
+            else
+                threads[i] = new VisitorAcceptorThreadwrapper(Board, outputHandler, stopWork.get(), false);
+            threads[i].AcceptVisitor(new RecursiveSquiggleSolve());
+            threads[i].start();
+        }
+        for(Thread t : threads)
+        {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void stopThreads()
+    {
+        for (VisitorAcceptorThreadwrapper t:threads) {
+            t.stop();
+        }
     }
 }
 

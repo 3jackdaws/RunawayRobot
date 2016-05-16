@@ -1,5 +1,7 @@
 package com.stretchy;
 
+import sun.util.resources.cldr.om.CalendarData_om_ET;
+
 import java.util.ArrayDeque;
 
 /**
@@ -12,21 +14,28 @@ public class RecursiveSquiggleSolve implements ISolverVisitor
     ArrayDeque<Character> MovementQueue;
     private int xpos, ypos;
     private int full;
+    private int startQueueSize;
+    private OutputHandler outputHandler;
     @Override
-    public void SolverAction(Gameboard gb) {
+    public void SolverAction(Gameboard gb, OutputHandler out) {
         Board = gb;
+        outputHandler = out;
         Terrain = Board.getTerrain().toCharArray();
         MovementQueue = Board.getInstructionQueue().clone();
-        Solve();
-        Board.setInstructionQueue(MovementQueue.clone());
+        RecursiveTryAll();
     }
 
-    public void Solve()
+    public void Solve(int queueSize) throws BoardSolvedException
     {
-        System.out.println("Level: " + Board.getLevel());
-        System.out.println("Calculating Sub-board.");
-        System.out.println("Sub-board size: " + Board.getMaxInstructions() + " by " + Board.getMaxInstructions());
-        RecursiveTryAll();
+//        System.out.println("Level: " + Board.getLevel());
+//        System.out.println("Calculating Sub-board.");
+//        System.out.println("Sub-board size: " + Board.getMaxInstructions() + " by " + Board.getMaxInstructions());
+        MovementQueue.clear();
+        xpos = 0;
+        ypos = 0;
+        //System.out.println("Checking queue size: " + instr_num);
+        BuildQueue(queueSize);
+
     }
 
 
@@ -34,17 +43,18 @@ public class RecursiveSquiggleSolve implements ISolverVisitor
     private void RecursiveTryAll()
     {
         int instr_num = Board.getMinInstructions();
-        //long startTime = System.nanoTime();
-
         while(!FullBoardCheck())
         {
             MovementQueue.clear();
             xpos = 0;
             ypos = 0;
+
             System.out.println("Checking queue size: " + instr_num);
+
+            //outputHandler.updateStatus(instr_num, );
             try {
                 BuildQueue(instr_num++);
-            } catch (Exception e) {
+            } catch (BoardSolvedException e) {
                 System.out.println(e.getMessage());
             }
             //ShowPath();
@@ -59,11 +69,12 @@ public class RecursiveSquiggleSolve implements ISolverVisitor
         //System.out.println("Solved in " + GuessNumber + " guesses.");
     }
 
-    private void BuildQueue(int size) throws Exception {
+    private void BuildQueue(int size) throws BoardSolvedException {
         if(MovementQueue.size() == size) {
             if (FullBoardCheck())
             {
-                throw new Exception("Solved Correctly");
+                Board.setInstructionQueue(MovementQueue);
+                throw new BoardSolvedException();
             }
 
         }
@@ -72,11 +83,13 @@ public class RecursiveSquiggleSolve implements ISolverVisitor
             ypos++;
             BuildQueue(size);
             MovementQueue.removeLast();
+            Terrain[ypos * Board.getBoardX() + xpos] = 'X';
             ypos--;
             MovementQueue.add('R');
             xpos++;
             BuildQueue(size);
             MovementQueue.removeLast();
+            Terrain[ypos * Board.getBoardX() + xpos] = 'X';
             xpos--;
         }
 
@@ -133,5 +146,9 @@ public class RecursiveSquiggleSolve implements ISolverVisitor
             }
             System.out.print("\n");
         }
+    }
+
+    public void setStartQueueSize(int startQueueSize) {
+        this.startQueueSize = startQueueSize;
     }
 }

@@ -51,6 +51,6 @@ public class TestBoardGenerator {
 
     public Gameboard getBoard()
     {
-        return new Gameboard(String.valueOf(terrain), boardX, boardY, queueSize+2, 2, 1);
+        return new Gameboard(String.valueOf(terrain), boardX, boardY, InstructionQueue.size()+3, 2, 1);
     }
 }

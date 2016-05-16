@@ -1,3 +1,7 @@
+/*@author Ian Murphy
+
+ */
+
 package com.stretchy;
 
 import java.awt.*;
@@ -14,6 +18,7 @@ public class Main {
     {
         int last_level = 0;
         for (;;) {
+
             WebpageParser robot = new WebpageParser("http://www.hacker.org/runaway/index.php?name=stretchyvizsla&password=xdp-XAM-EPK-Y2J");
             System.out.println("Board size: " + robot.GetBoard().getBoardX() + " by " + robot.GetBoard().getBoardY());
             System.out.println("Min: " + robot.GetBoard().getMinInstructions() + " Max: " + robot.GetBoard().getMaxInstructions());
@@ -27,20 +32,30 @@ public class Main {
                 }
             }
             last_level = robot.GetBoard().getLevel();
-            BoardSolver RobotSolver = new BoardSolver(robot.GetBoard());
-            //TestBoardGenerator board1 = new TestBoardGenerator(80, 80, 28);
-            //BoardSolver RobotSolver = new BoardSolver(board1.getBoard());
-            RobotSolver.DispayBoard();
-            RobotSolver.AcceptVisitor(new PathifyGameboard());
-            RobotSolver.DispayBoard();
-            RobotSolver.AcceptVisitor(new PathifyGameboard());
-            RobotSolver.DispayBoard();
+            //TestBoardGenerator board1 = new TestBoardGenerator(200, 200, 30);
+            Gameboard board = robot.GetBoard();
+            OutputHandler consoleOutput = new OutputHandler(board);
 
-            RobotSolver.DisplaySubBoard();
-            //RobotSolver.AcceptVisitor(new LinearLookaheadSolve());
+            //BoardSolver RobotSolver = new BoardSolver(robot.GetBoard());
+
+            BoardSolver RobotSolver = new BoardSolver(board);
+            //RobotSolver.DispayBoard();
+            RobotSolver.AcceptVisitor(new PathifyGameboard());
+
+            RobotSolver.AcceptVisitor(new PathifyGameboard());
+            RobotSolver.setOutputHandler(consoleOutput);
+            //consoleOutput.StartOutput();
+            //RobotSolver.AcceptVisitorThreaded(new RecursiveSquiggleSolve(), 7);
             RobotSolver.AcceptVisitor(new RecursiveSquiggleSolve());
+
+
+
+            //RobotSolver.AcceptVisitor(new RecursiveSquiggleSolve());
             //RobotSolver.AcceptVisitor(new SubsectionTendrilSolve());
             //RobotSolver.OutputSolutionPath();
+
+
+            //System.out.println(board.getInstructionQueue());
             RobotSolver.Submit();
         }
     }
