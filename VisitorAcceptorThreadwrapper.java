@@ -47,7 +47,7 @@ public class VisitorAcceptorThreadwrapper extends Thread implements ISolverVisit
             if(testSize == -1) return;
             _outputHandler.updateStatus(testSize, "[" + _threadName + "] - Working");
             try {
-                _visitor.Solve(testSize);
+                _visitor.Solve();
                 _outputHandler.updateStatus(testSize, "[" + _threadName + "] - Cleared");
             }catch (BoardSolvedException e) {
                 //e.printStackTrace();

@@ -26,9 +26,9 @@ public class RecursiveSquiggleSolve implements ISolverVisitor, ISolvable
     }
 
     @Override
-    public ISolverVisitor clone() {
-        ISolverVisitor
-        return null;
+    public RecursiveSquiggleSolve clone() {
+        RecursiveSquiggleSolve obj = new RecursiveSquiggleSolve();
+        return obj;
     }
 
     private void BuildQueue(int size) throws BoardSolvedException {
@@ -85,10 +85,6 @@ public class RecursiveSquiggleSolve implements ISolverVisitor, ISolvable
     private boolean SingleMoveCheck()
     {
         return Terrain[ypos * Board.getBoardX() + xpos] == '.';
-    }
-
-    public void setStartQueueSize(int startQueueSize) {
-        this.startQueueSize = startQueueSize;
     }
 
     @Override
