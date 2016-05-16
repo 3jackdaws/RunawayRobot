@@ -1,19 +1,17 @@
 package com.stretchy;
 
 
-import com.sun.jmx.remote.internal.ArrayQueue;
-import javafx.util.Pair;
+import com.stretchy.interfaces.ISolverVisitor;
+import com.stretchy.interfaces.ISolverVisitorAcceptor;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import java.util.concurrent.DelayQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

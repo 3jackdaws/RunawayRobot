@@ -1,11 +1,11 @@
 package com.stretchy;
 
-import java.nio.file.Path;
+import com.stretchy.interfaces.ISolverVisitor;
 
 /**
  * Created by ian on 3/25/16.
  */
-public class PathifyGameboard implements ISolverVisitor{
+public class PathifyGameboard implements ISolverVisitor {
 
     private Gameboard Board;
     private char[] Terrain;

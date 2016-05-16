@@ -1,5 +1,8 @@
 package com.stretchy;
 
+import com.stretchy.interfaces.ISolverVisitor;
+import com.stretchy.interfaces.ISolverVisitorAcceptor;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
