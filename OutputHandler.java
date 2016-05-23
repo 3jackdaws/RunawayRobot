@@ -11,6 +11,7 @@ import java.util.*;
 public class OutputHandler {
 
     LinkedList<Displayable> _displayObjects = new LinkedList<>();
+    Timer timer;
 
     public OutputHandler()
     {
@@ -39,7 +40,7 @@ public class OutputHandler {
     public void StartOutput()
     {
         WriteOutput();
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -53,6 +54,11 @@ public class OutputHandler {
     private void clear()
     {
         String newlines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-        System.out.print(newlines);
+
+        System.out.print(newlines + newlines);
+    }
+
+    public void stopOutput(){
+        timer.cancel();
     }
 }

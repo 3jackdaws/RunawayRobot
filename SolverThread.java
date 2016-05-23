@@ -12,34 +12,41 @@ public class SolverThread extends Thread implements ISolvableAcceptor,Displayabl
 
     protected String _displayableString = "Inactive";
     protected boolean _displayableUpdated;
+    protected String _workDirection;
 
-    protected int _problemSize;
 
-
-    public SolverThread(String threadName)
+    public SolverThread(String threadName, String behavior)
     {
         super(threadName);
+        _workDirection = behavior;
     }
     @Override
     public void run() {
-        //_algorithm
-        _displayableString = "Active - Solving";
-        _displayableUpdated = true;
-        _algorithm.setqSize(_problemSize);
-        _algorithm.Solve();
+        _algorithm.AcceptCoordinator(_coordinator);
+        int queueSize = 0;
+        while(!_coordinator.threadStop()){
+            queueSize = _coordinator.getNextInQueue(_workDirection);
+            _coordinator.registerWork("Working - [Not Profiled]", queueSize);
+            _algorithm.setqSize(queueSize);
+            if(_algorithm.Solve()) {
+                _coordinator.registerWork("Solved - Thread [" + this.getName() + "]", queueSize);
+                _coordinator.stopAllThreads();
+            }
+            else
+                _coordinator.registerWork(C.YELLOW + "Completed - Thread [" + this.getName() + "]" + C.DEFAULT, queueSize);
+        }
+
 
     }
 
-    public int getProblemSize() {
-        return _problemSize;
-    }
 
-    public void setProblemSize(int _problemSize) {
-        this._problemSize = _problemSize;
-    }
 
     public void setGameboard(Gameboard _gameBoard) {
         this._gameBoard = _gameBoard;
+    }
+
+    public void set_coordinator(SolverThreadCoordinator _coordinator) {
+        this._coordinator = _coordinator;
     }
 
     @Override

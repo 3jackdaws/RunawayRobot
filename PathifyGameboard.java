@@ -10,7 +10,7 @@ public class PathifyGameboard implements ISolverVisitor {
     private Gameboard Board;
     private char[] Terrain;
     @Override
-    public void SolverAction(Gameboard gb, OutputHandler out) {
+    public void SolverAction(Gameboard gb) {
         Board = gb;
         Terrain = Board.getTerrain().toCharArray();
         Pathify();
@@ -18,10 +18,6 @@ public class PathifyGameboard implements ISolverVisitor {
         Board.setTerrain(String.valueOf(Terrain));
     }
 
-    @Override
-    public void Solve(int queueSize) throws Exception {
-
-    }
 
     private void Pathify()
     {
@@ -90,5 +86,11 @@ public class PathifyGameboard implements ISolverVisitor {
         }
 
 
+    }
+
+
+    @Override
+    public ISolverVisitor clone() {
+        return null;
     }
 }
